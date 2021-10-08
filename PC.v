@@ -22,13 +22,12 @@ module PC(
     input clk,
     input rst,
 	 input [31:0] in,
-    input [31:0] out
+    output reg [31:0] out
     );
-	reg [31:0] counter;
-   always @(posedge clk)
-      if (rst)
-         counter <= 0;
-      else
-         counter <= in;
-	assign out = counter;
+   always @(posedge clk or posedge rst)
+      if (rst) begin
+			out <= 32'b0;
+      end else begin
+			out <= in;
+      end
 endmodule
