@@ -30,7 +30,7 @@ module MIPSALU(
 	always @(ALUctl, A, B) begin // reevaluate if these change
 		case (ALUctl)
 			0: ALUOut <= A & B;
-			1: ALUOut <= A | B;
+			1: ALUOut <= A | B; 
 			2: ALUOut <= A + B;
 			6: ALUOut <= A - B;
 			7: ALUOut <= A < B? 1 : 0;
