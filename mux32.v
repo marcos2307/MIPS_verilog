@@ -22,7 +22,7 @@ module mux32(
     input [31:0] d0,
     input [31:0] d1,
     input sel,
-    input [31:0] out
+    output [31:0] out
     );
    assign out = sel ? d1 : d0;			
 endmodule
