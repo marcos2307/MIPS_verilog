@@ -25,26 +25,26 @@ module registerfile(
     input clock,
     output reg [31:0] Data1, Data2
     );
-   (* RAM_STYLE="{AUTO | BLOCK |  BLOCK_POWER1 | BLOCK_POWER2}" *)
-   reg [31:1] RF [31:1];
+   
+   reg [31:0] RF [31:1];
 	
-	always @(Read1) begin
+	always @(Read1, RF) begin
       if (Read1==0)
-			Data1 <= 32'h0000;
+			Data1 = 32'h0000;
 		else
-			Data1 <= RF[Read1];
+			Data1 = RF[Read1];
    end
 	
-	always @(Read2) begin
+	always @(Read2, RF) begin
       if (Read2==0)
-			Data2 <= 32'h0000;
+			Data2 = 32'h0000;
 		else
-			Data2 <= RF[Read2];
+			Data2 = RF[Read2];
    end
 	
 	
    always @(posedge clock) begin
       if (RegWrite)
-			RF[WriteReg] <= WriteData;
+			RF[WriteReg] = WriteData;
    end
 endmodule
