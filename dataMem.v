@@ -22,48 +22,52 @@ module dataMem(
 	 input clk, we,
     input [31:0] addr,
     input [31:0] wd,
-    output reg [31:0] rd,
+	 input [31:0] entradas, // se agrega para las entradas
+    output[31:0] rd,
 	 output reg [31:0] salidas  // este registro se agrega para las salidas
     );
 	 
-	wire zero = 32'h0;
 	reg we_reg, we_mem;
 	reg [31:0] addr_mem;
 	 //RAM
    (* RAM_STYLE="{AUTO | BLOCK |  BLOCK_POWER1 | BLOCK_POWER2}" *)
-   reg [31:0] RAM [1023:0];
+   reg [31:0] RAM [12'hFFF:0];
    always @(posedge clk) begin
       if (we_mem)
 			RAM[addr_mem] <= wd;
-		rd <= RAM[addr];			
+			
    end
-
 	
-	// selector de we de memoria
-	always @(addr, we, zero)
+	//selector de salida de datos (al MIPS)
+	assign rd = (addr==32'hFFFF0001)? entradas : RAM[addr_mem];
+	
+	// selector de we de memoria de datos
+	always @(addr, we)
 		case (addr)
-				32'hffff0000 : we_mem <= zero;
-				default : we_mem <= we;
+				32'hffff0000 : we_mem = 0;
+				32'hffff0001 : we_mem = 0;
+				default : we_mem = we;
 		endcase
 
-	// selector de address de memoria	
-	always @(addr, zero)
+	// selector de address de memoria de datos
+	always @(addr)
 		case (addr)
-				32'hffff0000 : addr_mem <= zero;
-				default : addr_mem <= addr;
+				32'hffff0000 : addr_mem = 12'h000;
+				32'hffff0001 : addr_mem = 12'h000;
+				default : addr_mem = addr[11:0];
 		endcase
 
 	// selector de we de registro	
-	always @(addr, we, zero) 
+	always @(addr, we) 
 		case (addr)
-				32'hffff0000 : we_reg <= we;
-				default : we_reg <= zero;
+				32'hffff0000 : we_reg = we;
+				default : we_reg = 0;
 		endcase
 	
 	//registro de salidas
 	always @(posedge clk) begin
       if (we_reg)
-			salidas[addr] <= wd;
+			salidas = wd;
 		end
 				
 	
